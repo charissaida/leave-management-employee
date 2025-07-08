@@ -1,1 +1,74 @@
-<p>leave works!</p>
+<div class="p-6 bg-white rounded-lg shadow-md">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Leaves</h2>
+        <button (click)="openModal()"
+            class="px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+            New Request
+        </button>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Sr No</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Leave Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Reason</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700">
+                <tr *ngFor="let leave of leaveList; let i = index" class="border-b">
+                    <td class="px-6 py-4 whitespace-nowrap">{{ i + 1 }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ leave.leaveDate | date:'dd-MMM-yyyy' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ leave.leaveReason }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span [ngClass]="{
+              'bg-yellow-200 text-yellow-800': leave.leaveStatus === 'Pending',
+              'bg-green-200 text-green-800': leave.leaveStatus === 'Approved',
+              'bg-red-200 text-red-800': leave.leaveStatus === 'Rejected'
+            }" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                            {{ leave.leaveStatus }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button *ngIf="leave.leaveStatus == 'Pending'" (click)="approveLeave(leave.leaveId)"
+                            class="text-green-600 hover:text-green-900">Approve</button>
+                        <button *ngIf="leave.leaveStatus == 'Pending'" (click)="rejectLeave(leave.leaveId)"
+                            class="ml-4 text-red-600 hover:text-red-900">Reject</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="w-full max-w-lg p-8 space-y-6 bg-white rounded-lg shadow-xl">
+        <h3 class="text-xl font-bold text-gray-800">New Leave Request</h3>
+        <form>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Leave Reason</label>
+                    <textarea [(ngModel)]="leaveObj.leaveReason" name="leaveReason" rows="3"
+                        class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md"></textarea>
+                </div>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">From</label>
+                        <input type="date" [(ngModel)]="leaveObj.leaveDate" name="leaveDate"
+                            class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end mt-6 space-x-4">
+                <button type="button" (click)="closeModal()"
+                    class="px-4 py-2 font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
+                <button type="button" (click)="createLeave()"
+                    class="px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Submit
+                    Request</button>
+            </div>
+        </form>
+    </div>
+</div>
